@@ -69,4 +69,12 @@ export const api = {
   agentList: () => get('/agents'),
 
   agentTest: (params: { agent: string }) => post('/agents/test', params),
+
+  browse: (dirPath?: string) =>
+    post('/browse', { path: dirPath }) as Promise<ApiResult & { path?: string; folders?: string[] }>,
+
+  openProject: (dirPath: string) =>
+    post('/open-project', { path: dirPath }) as Promise<
+      ApiResult & { projectDir?: string; project?: Record<string, string>; raw?: string; error?: string }
+    >,
 };

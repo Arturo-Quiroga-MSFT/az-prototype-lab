@@ -159,6 +159,58 @@ app.post('/api/agents/test', async (req, res) => {
   res.json(await runPrototype(args));
 });
 
+// ─── File system helpers ────────────────────────────────────────
+
+import path from 'node:path';
+import fs from 'node:fs';
+
+app.post('/api/browse', async (req, res) => {
+  const dir = req.body.path || process.env.HOME || '/';
+  try {
+    const resolved = path.resolve(dir);
+    const entries = await fs.promises.readdir(resolved, { withFileTypes: true });
+    const folders = entries
+      .filter((e) => e.isDirectory() && !e.name.startsWith('.'))
+      .map((e) => e.name)
+      .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+    res.json({ success: true, path: resolved, folders });
+  } catch (err: unknown) {
+    const e = err as { message?: string };
+    res.json({ success: false, path: dir, folders: [], error: e.message });
+  }
+});
+
+app.post('/api/open-project', async (req, res) => {
+  const dir = req.body.path;
+  if (!dir) {
+    res.json({ success: false, error: 'No path provided' });
+    return;
+  }
+  const yamlPath = path.join(path.resolve(dir), 'prototype.yaml');
+  try {
+    const content = await fs.promises.readFile(yamlPath, 'utf-8');
+    // Parse basic fields from YAML (lightweight — no yaml lib needed)
+    const get = (key: string) => {
+      const m = content.match(new RegExp(`^\\s*${key}:\\s*'?([^'\\n]+)'?`, 'm'));
+      return m ? m[1].trim() : '';
+    };
+    res.json({
+      success: true,
+      projectDir: path.resolve(dir),
+      project: {
+        name: get('name'),
+        location: get('location'),
+        environment: get('environment'),
+        iacTool: get('iac_tool'),
+        aiProvider: get('provider'),
+      },
+      raw: content,
+    });
+  } catch {
+    res.json({ success: false, error: `No prototype.yaml found in ${dir}` });
+  }
+});
+
 // ─── Start ──────────────────────────────────────────────────────
 
 app.listen(PORT, () => {
