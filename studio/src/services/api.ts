@@ -40,7 +40,7 @@ export const api = {
 
   init: (params: InitParams) => post('/init', params),
 
-  design: (params: CwdParams) => post('/design', params),
+  design: (params: CwdParams & { context?: string }) => post('/design', params),
 
   build: (params: CwdParams) => post('/build', params),
 

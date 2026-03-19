@@ -14,7 +14,7 @@ export default function DesignStage() {
     setLoading(true);
     addLog({ agent: 'Architect', message: 'Starting design phase...' });
     try {
-      const result = await api.design({ cwd: project.cwd });
+      const result = await api.design({ cwd: project.cwd, context: project.description || undefined });
       if (result.success) {
         setDesignOutput(result.stdout);
         addLog({ agent: 'Architect', message: 'Design complete — architecture generated.' });

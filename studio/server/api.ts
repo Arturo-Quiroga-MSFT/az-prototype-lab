@@ -9,9 +9,14 @@ import { promisify } from 'node:util';
 const execFileAsync = promisify(execFile);
 const app = express();
 const PORT = 3001;
-const TIMEOUT_MS = 300_000; // 5 minutes
+const TIMEOUT_MS = 900_000; // 15 minutes — design phase can be long
 
 app.use(express.json());
+
+// Strip ANSI escape codes from CLI output
+function stripAnsi(str: string): string {
+  return str.replace(/\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])/g, '');
+}
 
 // ─── CLI executor ───────────────────────────────────────────────
 
@@ -26,21 +31,23 @@ interface CliResult {
 
 async function runPrototype(args: string[], cwd?: string): Promise<CliResult> {
   try {
-    const { stdout, stderr } = await execFileAsync('az', ['prototype', ...args], {
+    const { stdout, stderr } = await execFileAsync('az', ['prototype', ...args, '--only-show-errors'], {
       cwd: cwd || process.cwd(),
       timeout: TIMEOUT_MS,
       maxBuffer: 10 * 1024 * 1024,
-      env: { ...process.env },
+      env: { ...process.env, NO_COLOR: '1' },
     });
+    const cleanOut = stripAnsi(stdout);
+    const cleanErr = stripAnsi(stderr);
     let json: unknown | null = null;
-    try { json = JSON.parse(stdout); } catch { /* not JSON */ }
-    return { success: true, stdout, stderr, exitCode: 0, json };
+    try { json = JSON.parse(cleanOut); } catch { /* not JSON */ }
+    return { success: true, stdout: cleanOut, stderr: cleanErr, exitCode: 0, json };
   } catch (err: unknown) {
     const e = err as { stdout?: string; stderr?: string; code?: number; message?: string };
     return {
       success: false,
-      stdout: e.stdout ?? '',
-      stderr: e.stderr ?? e.message ?? 'Unknown error',
+      stdout: stripAnsi(e.stdout ?? ''),
+      stderr: stripAnsi(e.stderr ?? e.message ?? 'Unknown error'),
       exitCode: e.code ?? 1,
       json: null,
     };
@@ -99,7 +106,9 @@ app.post('/api/init', async (req, res) => {
 });
 
 app.post('/api/design', async (req, res) => {
-  res.json(await runPrototype(['design'], req.body.cwd));
+  const args = ['design', '--skip-discovery'];
+  if (req.body.context) args.push('--context', req.body.context);
+  res.json(await runPrototype(args, req.body.cwd));
 });
 
 app.post('/api/build', async (req, res) => {

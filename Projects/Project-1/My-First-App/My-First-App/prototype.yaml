@@ -1,9 +1,9 @@
 project:
-  id: 8f7456c0-e778-426c-9328-5b3c5e6b3020
+  id: e0120c86-c0ff-4548-9799-f58dfcffe7a7
   name: My-First-App
   location: eastus2
   environment: dev
-  created: '2026-03-19T20:13:08.224254+00:00'
+  created: '2026-03-19T20:30:24.756256+00:00'
   iac_tool: terraform
 naming:
   strategy: microsoft-alz
@@ -12,10 +12,10 @@ naming:
   zone_id: zd
 ai:
   provider: azure-openai
-  model: gpt-5.4
+  model: gpt-4o
   azure_openai:
-    endpoint: https://r2d2-foundry-001.openai.azure.com/
-    deployment: gpt-5.4
+    endpoint: ''
+    deployment: gpt-4o
 agents:
   custom_dir: .prototype/agents/
   custom: {}
@@ -38,7 +38,7 @@ mcp:
 stages:
   init:
     completed: true
-    timestamp: '2026-03-19T20:13:08.238069+00:00'
+    timestamp: '2026-03-19T20:30:24.764935+00:00'
   design:
     completed: false
     timestamp: null
