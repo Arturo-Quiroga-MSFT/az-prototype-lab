@@ -4,6 +4,7 @@ interface ApiResult {
   stderr: string;
   exitCode: number;
   json: unknown | null;
+  projectDir?: string;
 }
 
 interface InitParams {

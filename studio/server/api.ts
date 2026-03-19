@@ -21,6 +21,7 @@ interface CliResult {
   stderr: string;
   exitCode: number;
   json: unknown | null;
+  projectDir?: string;
 }
 
 async function runPrototype(args: string[], cwd?: string): Promise<CliResult> {
@@ -73,7 +74,28 @@ app.post('/api/init', async (req, res) => {
   if (aiProvider) args.push('--ai-provider', aiProvider);
   if (environment) args.push('--environment', environment);
   if (template) args.push('--template', template);
-  res.json(await runPrototype(args, req.body.cwd));
+
+  const cwd = req.body.cwd || process.cwd();
+  const result = await runPrototype(args, cwd);
+
+  // Detect the created project directory so the frontend can track it
+  if (result.success && name) {
+    const path = await import('node:path');
+    const fs = await import('node:fs');
+    const candidate = path.default.resolve(cwd, name);
+    try {
+      await fs.promises.access(path.default.join(candidate, 'prototype.yaml'));
+      result.projectDir = candidate;
+    } catch {
+      // prototype.yaml not found in expected subdir — may have been created in cwd
+      try {
+        await fs.promises.access(path.default.join(cwd, 'prototype.yaml'));
+        result.projectDir = cwd;
+      } catch { /* leave projectDir unset */ }
+    }
+  }
+
+  res.json(result);
 });
 
 app.post('/api/design', async (req, res) => {

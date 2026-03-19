@@ -23,12 +23,17 @@ export default function InitStage() {
         template: project.template || undefined,
         cwd: project.cwd || undefined,
       });
-      addLog({
-        agent: 'System',
-        message: result.success
-          ? 'Project initialized successfully.'
-          : `Init failed: ${result.stderr}`,
-      });
+      if (result.success) {
+        // Auto-update working directory to the created project folder
+        if (result.projectDir) {
+          setProject({ cwd: result.projectDir });
+          addLog({ agent: 'System', message: `Project initialized successfully. Working directory set to ${result.projectDir}` });
+        } else {
+          addLog({ agent: 'System', message: 'Project initialized successfully.' });
+        }
+      } else {
+        addLog({ agent: 'System', message: `Init failed: ${result.stderr}` });
+      }
     } finally {
       setLoading(false);
     }
