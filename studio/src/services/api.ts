@@ -8,8 +8,12 @@ interface ApiResult {
 
 interface InitParams {
   name: string;
-  description?: string;
   location?: string;
+  iacTool?: string;
+  aiProvider?: string;
+  environment?: string;
+  template?: string;
+  cwd?: string;
 }
 
 interface CwdParams {

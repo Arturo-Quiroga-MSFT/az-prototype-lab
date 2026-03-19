@@ -4,6 +4,10 @@ export interface ProjectConfig {
   name: string;
   description: string;
   location: string;
+  iacTool: string;
+  aiProvider: string;
+  environment: string;
+  template: string;
   cwd: string;
 }
 
@@ -30,6 +34,10 @@ export const useProjectStore = create<ProjectState>((set) => ({
     name: '',
     description: '',
     location: 'eastus',
+    iacTool: 'terraform',
+    aiProvider: 'copilot',
+    environment: 'dev',
+    template: '',
     cwd: '',
   },
   setProject: (partial) =>

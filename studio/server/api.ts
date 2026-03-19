@@ -65,11 +65,14 @@ app.get('/api/prerequisites', async (_req, res) => {
 });
 
 app.post('/api/init', async (req, res) => {
-  const { name, description, location } = req.body as Record<string, string>;
+  const { name, location, iacTool, aiProvider, environment, template } = req.body as Record<string, string>;
   const args = ['init'];
   if (name) args.push('--name', name);
-  if (description) args.push('--description', description);
   if (location) args.push('--location', location);
+  if (iacTool) args.push('--iac-tool', iacTool);
+  if (aiProvider) args.push('--ai-provider', aiProvider);
+  if (environment) args.push('--environment', environment);
+  if (template) args.push('--template', template);
   res.json(await runPrototype(args, req.body.cwd));
 });
 

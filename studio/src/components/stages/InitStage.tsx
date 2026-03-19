@@ -16,8 +16,12 @@ export default function InitStage() {
     try {
       const result = await api.init({
         name: project.name,
-        description: project.description,
         location: project.location,
+        iacTool: project.iacTool,
+        aiProvider: project.aiProvider,
+        environment: project.environment,
+        template: project.template || undefined,
+        cwd: project.cwd || undefined,
       });
       addLog({
         agent: 'System',
@@ -55,9 +59,12 @@ export default function InitStage() {
           />
         </div>
 
-        {/* Description */}
+        {/* Description — stored locally, used during design phase */}
         <div>
-          <label className="label">Description</label>
+          <label className="label">
+            Description{' '}
+            <span className="font-normal text-gray-500">(used in Design phase)</span>
+          </label>
           <textarea
             className="input min-h-[80px]"
             placeholder="A web application with Azure Functions backend and Cosmos DB..."
@@ -84,6 +91,67 @@ export default function InitStage() {
             <option value="southeastasia">Southeast Asia</option>
             <option value="australiaeast">Australia East</option>
             <option value="uksouth">UK South</option>
+          </select>
+        </div>
+
+        {/* IaC Tool */}
+        <div>
+          <label className="label">Infrastructure-as-Code Tool</label>
+          <select
+            className="input"
+            value={project.iacTool}
+            onChange={(e) => setProject({ iacTool: e.target.value })}
+          >
+            <option value="terraform">Terraform</option>
+            <option value="bicep">Bicep</option>
+          </select>
+        </div>
+
+        {/* AI Provider */}
+        <div>
+          <label className="label">AI Provider</label>
+          <select
+            className="input"
+            value={project.aiProvider}
+            onChange={(e) => setProject({ aiProvider: e.target.value })}
+          >
+            <option value="copilot">Copilot</option>
+            <option value="github-models">GitHub Models</option>
+            <option value="azure-openai">Azure OpenAI</option>
+          </select>
+        </div>
+
+        {/* Environment */}
+        <div>
+          <label className="label">Target Environment</label>
+          <select
+            className="input"
+            value={project.environment}
+            onChange={(e) => setProject({ environment: e.target.value })}
+          >
+            <option value="dev">Development</option>
+            <option value="staging">Staging</option>
+            <option value="prod">Production</option>
+          </select>
+        </div>
+
+        {/* Template */}
+        <div>
+          <label className="label">
+            Project Template{' '}
+            <span className="font-normal text-gray-500">(optional)</span>
+          </label>
+          <select
+            className="input"
+            value={project.template}
+            onChange={(e) => setProject({ template: e.target.value })}
+          >
+            <option value="">None — blank project</option>
+            <option value="web-app">Web App</option>
+            <option value="data-pipeline">Data Pipeline</option>
+            <option value="ai-app">AI App</option>
+            <option value="microservices">Microservices</option>
+            <option value="serverless-api">Serverless API</option>
           </select>
         </div>
 
