@@ -118,9 +118,10 @@ export default function InitStage() {
       });
       if (result.success) {
         if (result.projectDir) {
-          setProject({ cwd: result.projectDir });
+          setProject({ cwd: result.projectDir, initialized: true });
           addLog({ agent: 'System', message: `Project initialized successfully. Working directory set to ${result.projectDir}` });
         } else {
+          setProject({ initialized: true });
           addLog({ agent: 'System', message: 'Project initialized successfully.' });
         }
       } else {
@@ -144,6 +145,7 @@ export default function InitStage() {
         aiProvider: result.project.aiProvider || 'copilot',
         environment: result.project.environment || 'dev',
         cwd: result.projectDir || openPath,
+        initialized: true,
       });
       addLog({ agent: 'System', message: `Opened project "${result.project.name}" from ${result.projectDir}` });
     } else {
@@ -215,7 +217,14 @@ export default function InitStage() {
 
       {/* ── Initialize New Project ────────────────────────── */}
       <div>
-        <h2 className="text-xl font-bold text-white">Initialize New Project</h2>
+        <div className="flex items-center gap-3">
+          <h2 className="text-xl font-bold text-white">Initialize New Project</h2>
+          {project.initialized && (
+            <span className="rounded-full bg-green-900/40 px-2.5 py-0.5 text-xs font-medium text-green-400 border border-green-700/50">
+              Project Loaded
+            </span>
+          )}
+        </div>
         <p className="mt-1 text-sm text-gray-400">
           Configure the basics for your Azure prototype, then run{' '}
           <code className="rounded bg-gray-800 px-1 text-azure-300">
@@ -357,11 +366,11 @@ export default function InitStage() {
       {/* Action */}
       <button
         className="btn-primary flex items-center gap-2"
-        disabled={!project.name || loading}
+        disabled={!project.name || loading || project.initialized}
         onClick={handleInit}
       >
         <Play size={16} />
-        {loading ? 'Initializing...' : 'Initialize Project'}
+        {loading ? 'Initializing...' : project.initialized ? 'Already Initialized' : 'Initialize Project'}
       </button>
     </div>
   );

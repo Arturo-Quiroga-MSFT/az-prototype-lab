@@ -9,6 +9,7 @@ export interface ProjectConfig {
   environment: string;
   template: string;
   cwd: string;
+  initialized: boolean;
 }
 
 export interface LogEntry {
@@ -39,6 +40,7 @@ export const useProjectStore = create<ProjectState>((set) => ({
     environment: 'dev',
     template: '',
     cwd: '',
+    initialized: false,
   },
   setProject: (partial) =>
     set((state) => ({ project: { ...state.project, ...partial } })),

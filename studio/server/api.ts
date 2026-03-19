@@ -74,6 +74,28 @@ app.get('/api/prerequisites', async (_req, res) => {
 
 app.post('/api/init', async (req, res) => {
   const { name, location, iacTool, aiProvider, environment, template } = req.body as Record<string, string>;
+
+  const cwd = req.body.cwd || process.cwd();
+
+  // Guard: refuse to init if prototype.yaml already exists in target
+  const path = await import('node:path');
+  const fs = await import('node:fs');
+  const targetDir = name ? path.default.resolve(cwd, name) : cwd;
+  for (const checkDir of [targetDir, cwd]) {
+    try {
+      await fs.promises.access(path.default.join(checkDir, 'prototype.yaml'));
+      res.json({
+        success: false,
+        stdout: '',
+        stderr: `Project already exists at ${checkDir}. Use "Open Existing Project" instead.`,
+        exitCode: 1,
+        json: null,
+        projectDir: checkDir,
+      } satisfies CliResult);
+      return;
+    } catch { /* not found — good, we can init */ }
+  }
+
   const args = ['init'];
   if (name) args.push('--name', name);
   if (location) args.push('--location', location);
@@ -81,8 +103,6 @@ app.post('/api/init', async (req, res) => {
   if (aiProvider) args.push('--ai-provider', aiProvider);
   if (environment) args.push('--environment', environment);
   if (template) args.push('--template', template);
-
-  const cwd = req.body.cwd || process.cwd();
   const result = await runPrototype(args, cwd);
 
   // Detect the created project directory so the frontend can track it
