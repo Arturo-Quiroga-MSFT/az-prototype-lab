@@ -1,0 +1,7 @@
+[project]
+name = "az-prototype"
+version = "0.1.0"
+description = "Experimentation and testing workspace for az prototype (Azure CLI extension)"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = []
