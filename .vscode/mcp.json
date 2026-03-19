@@ -1,0 +1,8 @@
+{
+  "servers": {
+    "az-prototype": {
+      "command": "node",
+      "args": ["${workspaceFolder}/mcp-server/dist/index.js"]
+    }
+  }
+}

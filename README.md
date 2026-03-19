@@ -140,6 +140,7 @@ az prototype deploy
 | Guide | Description |
 |---|---|
 | [PSA Enablement Guide](guides/psa-enablement-guide.md) | 12 use cases for Partner Solution Architects, from live demos to custom agent workshops. Covers technology briefings, Architecture Design Sessions, PoCs, CI/CD integration, and more. |
+| [MCP Server](mcp-server/README.md) | 16 MCP tools wrapping `az prototype` for Claude Desktop, GitHub Copilot, and other MCP clients. Enables visual prototype orchestration alongside the [Azure Diagram Builder MCP](https://github.com/Arturo-Quiroga-MSFT/azure-architecture-diagram-builder/tree/main/mcp-server). |
 
 ## Command Reference (Quick View)
 
