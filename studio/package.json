@@ -1,0 +1,37 @@
+{
+  "name": "az-prototype-studio",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Visual studio for az prototype — design, build, and deploy Azure prototypes with a rich UI",
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:client": "vite",
+    "dev:server": "tsx watch server/api.ts",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "start": "node dist-server/api.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0",
+    "react-router-dom": "^7.5.0",
+    "zustand": "^5.0.0",
+    "lucide-react": "^0.500.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.0.0",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.4.0",
+    "autoprefixer": "^10.4.0",
+    "concurrently": "^9.1.0",
+    "postcss": "^8.5.0",
+    "tailwindcss": "^3.4.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0",
+    "vite": "^6.3.0"
+  }
+}

@@ -13,3 +13,5 @@ wheels/
 node_modules/
 mcp-server/dist/
 mcp-server/node_modules/
+studio/dist/
+studio/node_modules/
